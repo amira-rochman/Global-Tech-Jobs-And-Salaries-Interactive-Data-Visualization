@@ -1,0 +1,250 @@
+/* THEME VARIABLES (keywords: dark mode colors, CSS variables, dashboard theme) */
+:root {
+  --bg-app: #111827;       
+  --bg-card: #1f2937;      
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --accent: #8b5cf6;       
+  --border: rgba(255, 255, 255, 0.05);
+
+  --header-bg: rgba(31, 41, 55, 0.8);
+  --filter-bg: rgba(255, 255, 255, 0.03);
+  --insight-text: #cbd5e1;
+  --insight-highlight: #ffffff;
+  --list-item-bg: rgba(255,255,255,0.02);
+  --list-border-left: #374151;
+  --scrollbar-thumb: #374151;
+
+  --chart-grid-color: rgba(255,255,255,0.05);
+
+  --plot-landcolor: #374151;
+  --plot-z0: #1f2937;
+  --plot-marker-line: rgba(255, 255, 255, 0.1);
+  --plot-coastline: rgba(255, 255, 255, 0.05);
+}
+
+/* LIGHT THEME OVERRIDES (keywords: light mode colors, theme toggle CSS) */
+:root[data-theme="light"] {
+  --bg-app: #f3f4f6;
+  --bg-card: #ffffff;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --accent: #7c3aed;
+  --border: rgba(17, 24, 39, 0.12);
+
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --filter-bg: rgba(17, 24, 39, 0.03);
+  --insight-text: #374151;
+  --insight-highlight: #111827;
+  --list-item-bg: rgba(17,24,39,0.03);
+  --list-border-left: #d1d5db;
+  --scrollbar-thumb: #d1d5db;
+
+  --chart-grid-color: rgba(17, 24, 39, 0.08);
+
+  --plot-landcolor: #e5e7eb;
+  --plot-z0: #f3f4f6;
+  --plot-marker-line: rgba(17, 24, 39, 0.12);
+  --plot-coastline: rgba(17, 24, 39, 0.08);
+}
+
+/* PAGE BASE STYLES (keywords: app background, global font, page transition) */
+body {
+  margin: 0; font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-app); color: var(--text-main);
+  transition: background-color 350ms ease, color 350ms ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* LOADING SCREEN (keywords: loading overlay, loading spinner) */
+#loading-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg-app); z-index: 9999; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s;
+}
+#loading-overlay.hidden { opacity: 0; visibility: hidden; }
+.spinner {
+  border: 4px solid var(--border); border-top: 4px solid var(--accent);
+  border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+#loading-overlay h2 { color: var(--text-main); font-weight: 600; letter-spacing: 1px; }
+
+/* HEADER LAYOUT (keywords: header grid, top bar layout) */
+header {
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+  padding: 1.5rem 2rem; background: var(--header-bg); border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px); transition: background-color 350ms ease, border-color 350ms ease;
+}
+header h1 { grid-column: 2; margin: 0; font-size: 1.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; color: var(--text-main); }
+.header-right { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 16px; }
+
+.header-left { grid-column: 1; justify-self: start; display: flex; align-items: center; }
+
+/* CLEAR FILTER BUTTON (keywords: clear country filter button, reset filter button) */
+#clear-filter-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(244, 63, 94, 0.1); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 8px 16px; border-radius: 6px; font-weight: 600; font-family: inherit; font-size: 0.9rem;
+  cursor: pointer; transition: all 0.3s ease; white-space: nowrap;
+}
+#clear-filter-btn:hover { background: #f43f5e; color: white; }
+#clear-filter-btn.hidden { display: none; }
+
+/* EXPERIENCE FILTER DROPDOWN (keywords: dropdown filter, experience filter style) */
+.filter-wrapper {
+  display: flex; align-items: center; gap: 12px; padding: 0.5rem 1rem;
+  background: var(--filter-bg); border-radius: 8px; border: 1px solid var(--border); 
+  transition: background-color 350ms ease, border-color 350ms ease;
+}
+.filter-wrapper label { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+.filter-wrapper select {
+  padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text-main); font-size: 0.95rem; 
+  font-weight: 600; cursor: pointer; outline: none; transition: all 0.3s ease;
+}
+.filter-wrapper select:hover { border-color: rgba(139, 92, 246, 0.5); }
+
+/* THEME TOGGLE SWITCH (keywords: light dark switch, toggle slider) */
+.theme-switch { position: relative; display: inline-block; width: 64px; height: 34px; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--bg-card); border: 1px solid var(--border); transition: .4s;
+  border-radius: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px;
+}
+.slider:before {
+  position: absolute; content: ""; height: 26px; width: 26px; left: 3px; bottom: 3px;
+  background-color: var(--text-main); transition: .4s; border-radius: 50%; z-index: 2;
+}
+input:checked + .slider { background-color: var(--bg-card); }
+input:checked + .slider:before { transform: translateX(30px); }
+
+.icon-sun, .icon-moon { color: var(--text-muted); z-index: 1; display: flex; align-items: center; justify-content: center; transition: color 0.3s; }
+:root[data-theme="light"] .icon-sun { color: #f59e0b; }
+:root:not([data-theme="light"]) .icon-moon { color: #8b5cf6; }
+
+/* MAIN CONTENT WRAPPER (keywords: dashboard container, page spacing) */
+main { padding: 2rem; max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 2rem; flex: 1; }
+
+/* KPI CARDS (keywords: summary cards, total jobs card, KPI row) */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.kpi-card {
+  background: var(--bg-card); padding: 20px 24px; border-radius: 16px; border: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+.kpi-card .label { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
+.kpi-card .value { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+.kpi-card .trend { font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 12px; width: fit-content; transition: background 0.3s, color 0.3s; }
+
+.trend.live { color: #10b981; background: rgba(16, 185, 129, 0.1); }
+.trend.standard { color: #8b5cf6; background: rgba(139, 92, 246, 0.1); }
+.trend.info { color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+.trend.warning { color: #f43f5e; background: rgba(244, 63, 94, 0.1); }
+
+/* DASHBOARD CHART GRID (keywords: chart card layout, grid columns) */
+.charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.chart-card {
+  background: var(--bg-card); border-radius: 16px; padding: 1.75rem; border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; position: relative;
+  transition: background-color 350ms ease, border-color 350ms ease, box-shadow 350ms ease, transform 200ms ease, opacity 200ms ease;
+}
+
+.dash-updating .chart-card, .dash-updating .kpi-card { opacity: 0.85; transform: translateY(2px); }
+.dash-updating .insight-box { opacity: 0.9; }
+
+/* CARD SIZE MODIFIERS (keywords: map card width, full width chart) */
+.map-card { grid-column: span 2; }
+.top-countries-card { grid-column: span 1; }
+.bottom-card { grid-column: span 1; }
+/* NEW: Class to span the entire bottom row */
+.full-width-card { grid-column: span 3; }
+
+.chart-card h2 { margin: 0 0 0.25rem 0; font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+.chart-card p { font-size: 0.85rem; color: var(--text-muted); margin: 0 0 1.25rem 0; }
+
+/* CHART CONTAINERS (keywords: map container, canvas wrapper, scrollable chart) */
+.map-container { height: 350px; width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 1rem; position: relative; }
+.strict-canvas-wrapper { position: relative; width: 100%; height: 280px; margin-bottom: 1rem; }
+.canvas-wrapper { position: relative; width: 100%; }
+
+.scroll-container { overflow-y: auto; overflow-x: hidden; height: 280px; padding-right: 8px; margin-bottom: 1rem; position: relative;}
+.scroll-container::-webkit-scrollbar { width: 6px; }
+.scroll-container::-webkit-scrollbar-track { background: transparent; }
+.scroll-container::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 4px; }
+
+/* --- EMPTY STATES CSS --- */
+/* EMPTY STATE MESSAGE (keywords: no data message, empty chart overlay) */
+.empty-state {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: rgba(var(--bg-card), 0.8); backdrop-filter: blur(2px);
+  color: var(--text-muted); font-weight: 600; font-size: 0.95rem; text-align: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10; border-radius: 8px;
+}
+.empty-state.active { opacity: 1; pointer-events: all; }
+.empty-state svg { width: 40px; height: 40px; margin-bottom: 12px; color: var(--border); }
+
+/* INSIGHT TEXT BOX (keywords: chart insight text, dynamic explanation box) */
+.insight-box {
+  margin-top: auto; background: rgba(139, 92, 246, 0.05); border-left: 3px solid var(--accent);
+  padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 0.85rem; line-height: 1.5; color: var(--insight-text);
+}
+.insight-highlight { color: var(--insight-highlight); font-weight: 600; }
+
+@keyframes slideFadeIn { 0% { opacity: 0; transform: translateX(-15px); } 100% { opacity: 1; transform: translateX(0); } }
+
+/* TOP COUNTRIES LIST (keywords: top countries list, country hover highlight) */
+#top-countries { list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; gap: 10px; position: relative;}
+#top-countries li { 
+  display: flex; justify-content: space-between; align-items: center; 
+  padding: 12px 16px; background: var(--list-item-bg); 
+  border-radius: 12px; border-left: 4px solid var(--list-border-left);
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  opacity: 0; animation: slideFadeIn 0.5s ease-out forwards;
+}
+
+#top-countries li.highlight-match, #top-countries li.active-filter {
+  background: rgba(139, 92, 246, 0.15); border-left-color: var(--accent);
+  transform: scale(1.02) translateX(4px); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+#top-countries li:hover { background: rgba(139, 92, 246, 0.1); border-left-color: var(--accent); transform: translateX(4px); }
+.country-name { font-weight: 600; font-size: 0.95rem; pointer-events: none; }
+.job-badge { background: rgba(139, 92, 246, 0.15); color: #a78bfa; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; pointer-events: none;}
+
+/* RESPONSIVE BREAKPOINTS (keywords: mobile layout, tablet layout, responsive dashboard) */
+@media (max-width: 1024px) { 
+  .kpi-row, .charts-grid { grid-template-columns: repeat(2, 1fr); } 
+  .map-card, .top-countries-card, .full-width-card { grid-column: span 2; } 
+}
+@media (max-width: 768px) {
+  .kpi-row, .charts-grid { grid-template-columns: 1fr; } 
+  .map-card, .bottom-card, .top-countries-card, .full-width-card { grid-column: span 1; }
+  header { grid-template-columns: 1fr; gap: 1rem; } header h1 { grid-column: 1; } .header-right { grid-column: 1; justify-self: center; flex-wrap: wrap; }
+}
+
+/* FOOTER STYLES (keywords: data credit, theme-aware footer, attribution) */
+footer {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--header-bg);
+  backdrop-filter: blur(10px);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  transition: background-color 350ms ease, border-color 350ms ease, color 350ms ease;
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 350ms ease;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

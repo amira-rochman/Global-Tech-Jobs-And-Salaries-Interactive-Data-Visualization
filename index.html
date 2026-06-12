@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Global Tech Jobs & Salaries</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- STYLING FILE (keyword: dashboard CSS) -->
+  <link rel="stylesheet" href="CSS/style.css" />
+  
+  <!-- CHART LIBRARIES (keywords: Chart.js, Plotly, map chart library) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+</head>
+<body>
+
+  <!-- LOADING SCREEN (keywords: loading spinner, data loading overlay) -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <h2>Crunching Data...</h2>
+  </div>
+
+  <header>
+    <div class="header-left">
+      <!-- COUNTRY FILTER RESET BUTTON (keywords: clear country filter, reset map filter) -->
+      <button id="clear-filter-btn" class="hidden">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        Clear Country Filter
+      </button>
+    </div>
+    
+    <h1>Global Tech Jobs and Salaries</h1>
+    
+    <div class="header-right">
+      <div class="filter-wrapper">
+        <!-- DROPDOWN FILTER (keywords: experience filter, filter by level) -->
+        <label for="experience-filter">Experience Level:</label>
+        <select id="experience-filter">
+          <option value="all">All Levels</option>
+        </select>
+      </div>
+      
+      <!-- THEME SWITCH (keywords: light mode, dark mode, theme toggle) -->
+      <label class="theme-switch" for="theme-toggle" aria-label="Toggle light and dark mode">
+        <input type="checkbox" id="theme-toggle" />
+        <div class="slider">
+          <span class="icon-sun"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z"/><path d="M12 2h1v3h-1V2ZM12 19h1v3h-1v-3ZM4.22 4.22l.71-.71 2.12 2.12-.71.71-2.12-2.12ZM17.65 17.65l.71-.71 2.12 2.12-.71.71-2.12-2.12ZM2 11h3v2H2v-2Zm17 0h3v2h-3v-2ZM4.22 19.78l2.12-2.12.71.71-2.12 2.12-.71-.71ZM17.65 6.35l2.12-2.12.71.71-2.12 2.12-.71-.71Z"/></svg></span>
+          <span class="icon-moon"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79Z"/></svg></span>
+        </div>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <!-- KPI SUMMARY CARDS (keywords: dashboard stats, total jobs, dataset origin) -->
+    <div class="kpi-row">
+      <div class="kpi-card"><span class="label">Total Available Roles</span><span class="value" id="total-jobs-count">0</span><span class="trend live" id="kpi-roles-subtitle">Full Dataset</span></div>
+      <div class="kpi-card"><span class="label">Primary Currency</span><span class="value">USD ($)</span><span class="trend standard">Standardized</span></div>
+      <div class="kpi-card"><span class="label">Dataset Origin</span><span class="value" id="kpi-country">Global</span><span class="trend info" id="kpi-origin-subtitle">10 Countries</span></div>
+      <div class="kpi-card"><span class="label">Data Status</span><span class="value">Updated</span><span class="trend warning">2 Months Ago</span></div>
+    </div>
+
+    <section class="charts-grid">
+      
+      <div class="chart-card map-card">
+        <!-- INTERACTIVE WORLD MAP (keywords: map chart, click country, map zoom in) -->
+        <h2>Global Job Distribution</h2>
+        <p>Interactive world map. Click a country to filter the dashboard.</p>
+        <div class="map-container">
+          <div id="country-map-chart" style="width: 100%; height: 100%;"></div>
+          <div class="empty-state" id="empty-map"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>No location data available for this filter.</div>
+        </div>
+        <div class="insight-box" id="insight-map">Analyzing geographic distribution...</div>
+      </div>
+
+      <div class="chart-card top-countries-card">
+        <!-- TOP COUNTRY LIST (keywords: top 5 countries, country ranking, click to filter) -->
+        <h2>Top 5 Hiring Countries</h2>
+        <p>Click a country to filter.</p>
+        <ul id="top-countries"></ul>
+        <div class="empty-state" id="empty-countries"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Not enough data to rank.</div>
+        <div class="insight-box" id="insight-countries">Analyzing market concentration...</div>
+      </div>
+
+      <div class="chart-card bottom-card">
+        <!-- ROLE SALARY BAR CHART (keywords: median salary by role, horizontal bar chart) -->
+        <h2>Median Salary by Role</h2>
+        <p>Scroll down to view all job titles.</p>
+        <div class="scroll-container">
+          <div class="canvas-wrapper" id="role-wrapper">
+            <canvas id="role-salary-chart"></canvas>
+          </div>
+          <div class="empty-state" id="empty-role"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>No role data matches this filter.</div>
+        </div>
+        <div class="insight-box" id="insight-role">Analyzing compensation by role...</div>
+      </div>
+
+      <div class="chart-card bottom-card">
+        <!-- HISTOGRAM (keywords: salary distribution, salary ranges, job count bins) -->
+        <h2>Salary Distribution</h2>
+        <p>Job counts grouped by salary range.</p>
+        <div class="strict-canvas-wrapper">
+          <canvas id="salary-histogram-chart"></canvas>
+          <div class="empty-state" id="empty-hist"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>No salary data available.</div>
+        </div>
+        <div class="insight-box" id="insight-histogram">Analyzing salary brackets...</div>
+      </div>
+
+      <div class="chart-card bottom-card">
+        <!-- REMOTE VS HYBRID VS ON-SITE CHART (keywords: work mode comparison, remote salary) -->
+        <h2>Median Salary: Remote vs Hybrid vs On-site</h2>
+        <p>Baseline adjusted to highlight compensation differences.</p>
+        <div class="strict-canvas-wrapper">
+          <canvas id="remote-onsite-chart"></canvas>
+          <div class="empty-state" id="empty-remote"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>No remote work data available.</div>
+        </div>
+        <div class="insight-box" id="insight-remote">Analyzing workspace trends...</div>
+      </div>
+      
+      <div class="chart-card full-width-card">
+        <!-- BOXPLOT CHART (keywords: salary variance, outliers, box plot) -->
+        <h2>Salary Variance by Role</h2>
+        <p>Box plots show the standard salary range (the box) alongside individual job postings (the dots) to spot outliers.</p>
+        <div class="map-container" style="height: 380px;">
+          <div id="scatter-chart" style="width: 100%; height: 100%;"></div>
+          <div class="empty-state" id="empty-scatter"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>No individual jobs match this filter.</div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      📊 Data Source: Dataset curated by 
+      <a href="https://www.kaggle.com/datasets/meruvakodandasuraj/global-tech-jobs-and-salaries" target="_blank" rel="noopener noreferrer">Meruva Kodanda Suraj</a> 
+      via <a href="https://www.kaggle.com" target="_blank" rel="noopener noreferrer">Kaggle</a>.
+    </p>
+  </footer>  
+
+  <!-- MAIN JAVASCRIPT LOGIC (keywords: dashboard logic, data parsing, chart updates) -->
+  <script src="main.js"></script>
+</body>
+
+</html>
